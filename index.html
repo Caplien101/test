@@ -7,35 +7,36 @@
   <form id="myForm">
     <input type="text" id="name" placeholder="Nama">
     <textarea id="message" placeholder="Pesan"></textarea>
-    <button type="submit">Kirim</button>
+    <button type="submit">Kirim 1</button>
   </form>
 
   <pre id="response"></pre>
 
   <script>
-    document.getElementById('myForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const data = {
-        name: document.getElementById('name').value,
-        message: document.getElementById('message').value
-      };
-      
-      try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbzXiXVu150I4MXaNuKpPvy8OCEgQsAh0ASTm5-On-8I2WOaXCp86_956U1vn-5Rw7-L/exec', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        document.getElementById('response').textContent = JSON.stringify(result, null, 2);
-      } catch (error) {
-        console.error('Error:', error);
-      }
+  document.getElementById('myForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const data = {
+    name: document.getElementById('name').value,
+    message: document.getElementById('message').value
+  };
+  
+  try {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxoTUoTSZPzsBfT6dz-IHi0AEi1VkcOd29rILBL9k4PejDPhrq28fDlN34EE0HbVET5/exec', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+      mode: 'cors' // Pastikan mode CORS diaktifkan
     });
+    
+    const result = await response.json();
+    document.getElementById('response').textContent = JSON.stringify(result, null, 2);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+});
   </script>
 </body>
 </html>
