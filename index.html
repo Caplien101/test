@@ -7,13 +7,33 @@
         form { display: flex; flex-direction: column; gap: 10px; }
         input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
         button { padding: 10px; background: #4CAF50; color: white; border: none; cursor: pointer; }
-        pre { background: #f0f0f0; padding: 10px; border-radius: 4px; }
-        .success { color: green; }
-        .error { color: red; }
+        
+        /* Style untuk alert */
+        .alert {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        
+        @keyframes slideIn {
+            from { top: -50px; }
+            to { top: 20px; }
+        }
     </style>
 </head>
 <body>
     <h2>Simpan Data ke Google Sheet</h2>
+    
+    <!-- Alert Container -->
+    <div id="alert" class="alert"></div>
     
     <form id="dataForm">
         <label for="nama">Nama:</label>
@@ -25,14 +45,12 @@
         <button type="submit">Simpan</button>
     </form>
 
-    <h3>Respons:</h3>
-    <pre id="response"></pre>
-
     <script>
         document.getElementById('dataForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const GAS_URL = 'https://script.google.com/macros/s/AKfycbyMC-Xd1sZa0lK2wks7b0BpjLUL_JVZhNCIoY26Acxi7sWZHTDNraBtLbU2ETBwz2nv/exec';
+            const alertEl = document.getElementById('alert');
             
             const data = {
                 nama: document.getElementById('nama').value,
@@ -49,18 +67,28 @@
 
                 const result = await response.json();
                 
-                // Tampilkan respons dengan styling
-                const responseEl = document.getElementById('response');
-                responseEl.textContent = JSON.stringify(result, null, 2);
-                responseEl.className = result.status === 'success' ? 'success' : 'error';
+                // Tampilkan alert
+                alertEl.textContent = result.message || result.status;
+                alertEl.className = `alert ${result.status === 'success' ? 'success' : 'error'}`;
+                alertEl.style.display = 'block';
+                
+                // Auto-hide setelah 3 detik
+                setTimeout(() => {
+                    alertEl.style.display = 'none';
+                }, 3000);
 
                 if (result.status === 'success') {
-                    document.getElementById('dataForm').reset(); // Reset form
+                    document.getElementById('dataForm').reset();
                 }
                 
             } catch (error) {
-                document.getElementById('response').textContent = `Error: ${error.message}`;
-                document.getElementById('response').className = 'error';
+                alertEl.textContent = `Gagal mengirim data: ${error.message}`;
+                alertEl.className = 'alert error';
+                alertEl.style.display = 'block';
+                
+                setTimeout(() => {
+                    alertEl.style.display = 'none';
+                }, 3000);
             }
         });
     </script>
