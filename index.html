@@ -27,39 +27,44 @@
     <pre id="response"></pre>
 
     <script>
-        document.getElementById('testForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Ganti dengan URL deployment GAS Anda
-            const GAS_URL = 'https://script.google.com/macros/s/AKfycbxw3pJ9UAsUAotJlZCQGHFyGsrrhZR4BEeteRFUBDQQghe4pnM-r_1PEmSLFqeyIPVs/exec';
-            
-            const data = {
-                name: document.getElementById('name').value,
-                message: document.getElementById('message').value
-            };
+    document.getElementById('testForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const URL = 'https://script.google.com/macros/s/AKfycbxw3pJ9UAsUAotJlZCQGHFyGsrrhZR4BEeteRFUBDQQghe4pnM-r_1PEmSLFqeyIPVs/exec';
+        const DATA = {
+            name: document.getElementById('name').value,
+            message: document.getElementById('message').value
+        };
 
+        try {
+            const response = await fetch(URL, {
+                method: "POST",
+                redirect: "follow", // Penting untuk GAS!
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8", // Gunakan ini
+                },
+                body: JSON.stringify(DATA)
+            });
+            
+            // Handle response sebagai text dulu
+            const rawResult = await response.text();
+            
+            // Coba parse sebagai JSON
             try {
-                const response = await  fetch(GAS_URL, {
-      redirect: "follow",
-      method: "POST",
-      body: JSON.stringify(DATA),
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8",
-      },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-                document.getElementById('response').textContent = JSON.stringify(result, null, 2);
-
-                if (response.ok) {
-                    alert('Sukses mengirim data!');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('response').textContent = `Error: ${error.message}`;
+                const parsedResult = JSON.parse(rawResult);
+                document.getElementById('response').textContent = JSON.stringify(parsedResult, null, 2);
+            } catch {
+                document.getElementById('response').textContent = rawResult;
             }
-        });
-    </script>
+            
+            if (response.ok) {
+                alert('Request successful!');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('response').textContent = 'Error: ' + error.message;
+        }
+    });
+</script>
 </body>
 </html>
