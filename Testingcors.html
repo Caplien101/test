@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contoh CORS dengan GAS</title>
+</head>
+<body>
+  <button id="fetchButton">Ambil Data dari GAS</button>
+  <div id="dataContainer"></div>
+
+  <script>
+    document.getElementById('fetchButton').addEventListener('click', function() {
+      fetch('https://script.google.com/macros/s/AKfycbwCUGU-v_j5D2cC630O58Ho8hfXV88odR3yOt4a9hgCAuUpoaEz0P1BIqo-jl2kEQmUXw/exec') // Ganti dengan URL deploy GAS Anda
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('dataContainer').textContent = JSON.stringify(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('dataContainer').textContent = 'Terjadi kesalahan.';
+        });
+    });
+  </script>
+</body>
+</html>
